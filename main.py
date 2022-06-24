@@ -13,4 +13,20 @@ for num in numbers:
 
 print(f"Even Number List Is - {even_num}")
 
-# 3
+# 3 Take String from user and count vowels in it
+input_str = input("Enter Input String - ")
+input_str.casefold()
+vowels = "aeiou"
+length = 0
+
+num_vowels = [vowel for vowel in input_str if vowel in vowels]
+print(f"The Vowels Are - {len(num_vowels)}")
+
+# 4 Count Number of times vowels are repeated
+vowel_count = {}.fromkeys(vowels, 0)
+
+for char in input_str:
+    if char in vowels:
+        vowel_count[char] += 1
+
+print(f"The Vowel Count Are - {vowel_count}")
