@@ -1,0 +1,18 @@
+{
+        "patient_list": [
+                {
+                        "patient_id": 1,
+                        "firstname": "Mike",
+                        "lastname": "Tyson",
+                        "gender": "Male",
+                        "age": 28
+                },
+                {
+                        "patient_id": 2,
+                        "firstname": "Hasnain",
+                        "lastname": "Merchant",
+                        "gender": "Male",
+                        "age": 20
+                }
+        ]
+}
