@@ -12,4 +12,4 @@ def timed_greeting(func):
 def greeting(*args):
     print("Greetings")
     for arg in args:
-        print(f"{arg}", end= " ")
+        print(f"{arg}", end=" ")
