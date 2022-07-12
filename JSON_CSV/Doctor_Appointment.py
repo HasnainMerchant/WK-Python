@@ -1,47 +1,52 @@
 # Doctor Clinic (USING JSON)
 import json
+import sqlite3
 
 class Patient:
     choice = 0
 
-    def __init__(self, file_handle):
-        self.patient_data = json.load(file_handle)
+    def __init__(self, cursor):
+        self.db_cursor = cursor
 
     def patient_menu(self):
-        self.choice = int(input("\n1. CREATE PATIENT\n2. DELETE PATIENT\n3. UPDATE PATIENT\nCHOICE - "))
+        self.choice = int(input("\n1. CREATE PATIENT\n2. DELETE PATIENT\n3. UPDATE PATIENT\n4. DISPLAY PATIENTS\nCHOICE - "))
         if self.choice == 1:
             self.create_patient()
         elif self.choice == 2:
             self.delete_patient()
         elif self.choice == 3:
             self.update_patient()
+        elif self.choice == 4:
+            self.display_data()
 
     def save_data(self):
-        print("[+] SAVING TO FILE....")
-        with open("patient_data.json", "w") as patient_data:
-            json.dump(self.patient_data, patient_data, indent=8)
+        print("[+] COMMITING TO FILE....")
+        self.db_cursor.commit()
 
     def display_data(self):
-        for p in self.patient_data["patient_list"]:
-            print(f"Patient's Id - {p['patient_id']}")
-            print(f"Patient's Firstname - {p['firstname']}")
-            print(f"Patient's Lastname - {p['lastname']}")
-            print(f"Patient's Gender - {p['gender']}")
-            print(f"Patient's Age - {p['age']}")
+        print("\n")
+        data = self.db_cursor.execute("SELECT * FROM Patient_Data")
+        for p in data:
+            print(f"Patient's Id - {p[0]} --- Patient_ID")
+            print(f"Patient's Firstname - {p[1]} --- Firstname")
+            print(f"Patient's Lastname - {p[2]} --- LastName")
+            print(f"Patient's Gender - {p[3]} --- Gender")
+            print(f"Patient's Age - {p[4]} --- Age")
             print("\n\n")
 
     def create_patient(self):
-        print("[+] CREATING PATIENT....")
+        print("\n[+] CREATING PATIENT....")
 
-        patient = {}
-        patient["patient_id"] = int(input("ENTER PATIENT ID - "))
-        patient["firstname"] = input("ENTER PATIENT's FIRSTNAME - ")
-        patient["lastname"] = input("ENTER PATIENT's LASTNAME - ")
-        patient["gender"] = input("ENTER PATIENT's GENDER - ")
-        patient["age"] = int(input("ENTER PATIENT's AGE - "))
+        #Creating Patient Code
+        patient_id = input("ENTER PATIENT ID - ")
+        firstname = input("ENTER PATIENT's FIRSTNAME - ")
+        lastname = input("ENTER PATIENT's LASTNAME - ")
+        gender = input("ENTER PATIENT's GENDER - ")
+        age = input("ENTER PATIENT's AGE - ")
 
-        self.patient_data["patient_list"].append(patient)
-
+        self.db_cursor.execute(
+            """INSERT INTO Patient_Data (Patient_ID, Firstname, LastName, Gender, Age) VALUES (?, ?, ?, ?, ?)""",
+            (patient_id, firstname, lastname, gender, age))
         print("[+] PATIENT SUCCESSFULLY CREATED !")
         self.save_data()
         print("[+] SAVED FILE !\n")
@@ -51,58 +56,76 @@ class Patient:
     def delete_patient(self):
         print("[-] DELETING PATIENT....")
         self.display_data()
-        patient_id = int(input("ENTER PATIENT ID YOU WANT TO DELETE - "))
+        patient_id = input("ENTER PATIENT ID YOU WANT TO DELETE - ")
 
+        # Deleting Patient
+        self.db_cursor.execute(
+            """DELETE FROM Patient_Data WHERE Patient_ID = ?""",
+            (patient_id))
         print("[+] PATIENT SUCCESSFULLY DELETED !")
+
+        self.save_data()
+        print("[+] SAVED FILE !\n")
+
+        self.display_data()
 
     def update_patient(self):
         print("[+] UPDATING PATIENT....")
         self.display_data()
         patient_id = int(input("ENTER PATIENT ID YOU WANT TO UPDATE - "))
         patient_field = input("ENTER PATIENT INFORMATION FIELD YOU WANT TO UPDATE - ").lower()
-        for patient in self.patient_data["patient_list"]:
-            if patient["patient_id"] == patient_id:
-                patient[patient_field] = input("ENTER VALUE - ")
+        updated_value = input("ENTER UPDATED VALUE - ")
+        if patient_field == 'firstname':
+            self.db_cursor.execute(
+                """UPDATE Patient_Data SET Firstname = ? WHERE Patient_ID = ?""",
+                (updated_value, patient_id))
+        elif patient_field == "lastname":
+            self.db_cursor.execute(
+                """UPDATE Patient_Data SET LastName = ? WHERE Patient_ID = ?""",
+                (updated_value, patient_id))
+        elif patient_field == "age":
+            self.db_cursor.execute(
+                """UPDATE Patient_Data SET Age = ? WHERE Patient_ID = ?""",
+                (updated_value, patient_id))
         print("[+] PATIENT SUCCESSFULLY UPDATED !")
 
         self.save_data()
         print("[+] SAVED FILE !\n")
 
 
-class Appointment:
-    choice = 0
-    def __init__(self, file_handle):
-        self.appointment = json.load(file_handle)
-    def appointment_menu(self):
-        self.choice = int(input("\n1. GET APPOINTMENT\n2. EDIT APPOINTMENT\n3. DELETE APPOINTMENT\nCHOICE - "))
-        if self.choice == 1:
-            self.get_appointment()
-        elif self.choice == 2:
-            self.edit_appointment()
-        elif self.choice == 3:
-            self.delete_appointment()
-
-    def get_appointment(self):
-        print("[+] FETCHING APPOINTMENT....")
-    def edit_appointment(self):
-        print("[+] EDITING APPOINTMENT....")
-    def delete_appointment(self):
-        print("[-] DELETING APPOINTMENT....")
+# class Appointment:
+#     choice = 0
+#     def __init__(self, file_handle):
+#         self.appointment = json.load(file_handle)
+#     def appointment_menu(self):
+#         self.choice = int(input("\n1. GET APPOINTMENT\n2. EDIT APPOINTMENT\n3. DELETE APPOINTMENT\nCHOICE - "))
+#         if self.choice == 1:
+#             self.get_appointment()
+#         elif self.choice == 2:
+#             self.edit_appointment()
+#         elif self.choice == 3:
+#             self.delete_appointment()
+#
+#     def get_appointment(self):
+#         print("[+] FETCHING APPOINTMENT....")
+#     def edit_appointment(self):
+#         print("[+] EDITING APPOINTMENT....")
+#     def delete_appointment(self):
+#         print("[-] DELETING APPOINTMENT....")
 
 def main_menu():
     choice = int(input(("1. Patient Menu\n2. Appointment Menu\nChoice - ")))
     if choice == 1:
         #p_file_name = input("ENTER PATIENT FILE NAME") + ".json"
-        p_file_name = "patient_data.json"
-        patient_data = open(p_file_name, "r")
-        patient1 = Patient(patient_data)
+        cursor = sqlite3.connect("C:/Users/hasnain.merchant/SQL databases/pateint_db.db")
+        patient1 = Patient(cursor)
         patient1.patient_menu()
-    elif choice == 2:
-        #ap_file_name = input("ENTER APPOINTMENT FILE NAME (.json) - ")
-        ap_file_name = "patient_data.json"
-        appointment_data = open(ap_file_name, "r")
-        appointment1 = Appointment(appointment_data)
-        appointment1.appointment_menu()
+    # elif choice == 2:
+    #     #ap_file_name = input("ENTER APPOINTMENT FILE NAME (.json) - ")
+    #     ap_file_name = "patient_data.json"
+    #     appointment_data = open(ap_file_name, "r")
+    #     appointment1 = Appointment(appointment_data)
+    #     appointment1.appointment_menu()
 
 if __name__ == "__main__":
     main_menu()
