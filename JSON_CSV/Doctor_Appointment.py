@@ -9,7 +9,7 @@ class Patient:
         self.db_cursor = cursor
 
     def patient_menu(self):
-        self.choice = int(input("\n1. CREATE PATIENT\n2. DELETE PATIENT\n3. UPDATE PATIENT\n4. DISPLAY PATIENTS\nCHOICE - "))
+        self.choice = int(input("\n1. CREATE PATIENT\n2. DELETE PATIENT\n3. UPDATE PATIENT\n4. DISPLAY PATIENTS\n5. EXIT\nCHOICE - "))
         if self.choice == 1:
             self.create_patient()
         elif self.choice == 2:
@@ -18,6 +18,8 @@ class Patient:
             self.update_patient()
         elif self.choice == 4:
             self.display_data()
+        else:
+            exit(1)
 
     def save_data(self):
         print("[+] COMMITING TO FILE....")
@@ -116,10 +118,11 @@ class Patient:
 def main_menu():
     choice = int(input(("1. Patient Menu\n2. Appointment Menu\nChoice - ")))
     if choice == 1:
-        #p_file_name = input("ENTER PATIENT FILE NAME") + ".json"
         cursor = sqlite3.connect("C:/Users/hasnain.merchant/SQL databases/pateint_db.db")
+        print("[+] CONNECTED TO DATABASE")
         patient1 = Patient(cursor)
-        patient1.patient_menu()
+        while True:
+            patient1.patient_menu()
     # elif choice == 2:
     #     #ap_file_name = input("ENTER APPOINTMENT FILE NAME (.json) - ")
     #     ap_file_name = "patient_data.json"
