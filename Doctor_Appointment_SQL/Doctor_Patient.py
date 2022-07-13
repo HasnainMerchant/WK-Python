@@ -75,20 +75,24 @@ class Patient:
         print("[+] UPDATING PATIENT....")
         self.display_data()
         patient_id = int(input("ENTER PATIENT ID YOU WANT TO UPDATE - "))
-        patient_field = input("ENTER PATIENT INFORMATION FIELD YOU WANT TO UPDATE - ").lower()
+        patient_field = input("ENTER PATIENT INFORMATION FIELD YOU WANT TO UPDATE - ")
+        #update_field = input("ENter")
         updated_value = input("ENTER UPDATED VALUE - ")
-        if patient_field == 'firstname':
-            self.db_cursor.execute(
-                """UPDATE Patient_Data SET Firstname = ? WHERE Patient_ID = ?""",
-                (updated_value, patient_id))
-        elif patient_field == "lastname":
-            self.db_cursor.execute(
-                """UPDATE Patient_Data SET LastName = ? WHERE Patient_ID = ?""",
-                (updated_value, patient_id))
-        elif patient_field == "age":
-            self.db_cursor.execute(
-                """UPDATE Patient_Data SET Age = ? WHERE Patient_ID = ?""",
-                (updated_value, patient_id))
+        self.db_cursor.execute(
+            f"""UPDATE Patient_Data SET {patient_field} = ? WHERE Patient_ID = ?""",
+            (updated_value, patient_id))
+        # if patient_field == 'firstname':
+        #     self.db_cursor.execute(
+        #         """UPDATE Patient_Data SET Firstname = ? WHERE Patient_ID = ?""",
+        #         (updated_value, patient_id))
+        # elif patient_field == "lastname":
+        #     self.db_cursor.execute(
+        #         """UPDATE Patient_Data SET LastName = ? WHERE Patient_ID = ?""",
+        #         (updated_value, patient_id))
+        # elif patient_field == "age":
+        #     self.db_cursor.execute(
+        #         """UPDATE Patient_Data SET Age = ? WHERE Patient_ID = ?""",
+        #         (updated_value, patient_id))
         print("[+] PATIENT SUCCESSFULLY UPDATED !")
 
         self.save_data()
